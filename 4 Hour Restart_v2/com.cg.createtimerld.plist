@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>com.cg.createtimerld.plist</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/Library/Scripts/user_choice.sh</string>
+	</array>
+	<key>WatchPaths</key>
+	<array>
+		<string>/Library/Application Support/JAMF/Waiting Room</string>
+	</array>
+</dict>
+</plist>
