@@ -2,6 +2,7 @@
 # RYQ(Rany Qomsiya)
 # This script will add the current user to the admin group
 # It also creates a LaunchDaemon and script to remove that user in 24 hours
+# This script must only be run as a policy in Self-Service with the user needed admin rights logged in.
 
 # Where the launchdaemon and script will be stored
 launchDaemon="/Library/LaunchDaemons/com.ehemmete.removeadmin.plist"
