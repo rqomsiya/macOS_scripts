@@ -1,0 +1,108 @@
+##################################################################
+# Prepare for cleaning/rebuilding User's Outlook 2016 database
+# By: Christopher Miller Dated: 2016-12-01, LastMod: 2016-12-06
+# For: ITSD-ISS of JHU-APL
+# Taken From: http://www.cortig.net/wordpress/2016/04/25/outlook-2016-sqlite-database-commands/
+##################################################################
+
+####################################
+# Issue warning before closing Outlook Application
+####################################
+tell application "Finder"
+	activate
+	display dialog "This app will be modifying the Outlook 2016 database files and could damage data.  Please ensure a backup is ready BEFORE proceeding.  Hit -OK- to continue or -Cancel- to quit" buttons {"Cancel", "OK"} default button {"Cancel"} with title "WARNING" with icon stop
+end tell
+
+####################################
+# Check if open and if so, Close the Outlook Application
+####################################
+tell application "System Events"
+	repeat until ("Microsoft Outlook" is not in name of processes) is true
+		tell application "Microsoft Outlook" to quit
+	end repeat
+end tell
+
+
+#########################################
+# Query the Technician to choose a user account to manipulate
+#########################################
+set FileThere to "false"
+repeat until FileThere is "true"
+	tell application "System Events"
+		activate
+		do shell script "/bin/ls /Users | egrep -i -v Shared"
+		get paragraphs of result
+		choose from list (result) with prompt "Select the User Account you would like to clean" with title "CHOOSE USER"
+		if the result is not false then
+			set UserAcct to item 1 of the result
+		else if the result is false then
+			return
+		end if
+		
+		###################################
+		# Check if the database files exists for the User Accont
+		###################################
+		tell application "Finder"
+			if exists "/Users/" & UserAcct & "/Library/Group Containers/UBF8T346G9.Office/Outlook/Outlook 15 Profiles/Main Profile/Data/Outlook.sqlite" as POSIX file then
+				set FileThere to "true"
+			else
+				tell application "Finder"
+					activate
+					display dialog "Sorry, but an Outlook SQLite database file wasn't found for the account " & UserAcct & ", would you like to try again?" buttons {"Cancel", "Try Again"} default button {"Try Again"} with title "ERROR" with icon 2
+				end tell
+			end if
+		end tell
+	end tell
+end repeat
+
+
+
+##########################################
+# Find the Size of the Database Files BEFORE doing a vacuuming
+##########################################
+tell application "System Events"
+	set PreSizeMain to do shell script "/bin/ls -ho /Users/" & UserAcct & "\"/Library/Group Containers/UBF8T346G9.Office/Outlook/Outlook 15 Profiles/Main Profile/Data/Outlook.sqlite\" | awk {'print $4'}"
+	
+	set PreSizeWal to do shell script "/bin/ls -ho /Users/" & UserAcct & "\"/Library/Group Containers/UBF8T346G9.Office/Outlook/Outlook 15 Profiles/Main Profile/Data/Outlook.sqlite-wal\" | awk {'print $4'}"
+end tell
+
+
+
+##################################
+# Vacuum the database files for the chosen account 
+##################################
+try
+	do shell script "/usr/bin/sqlite3 /Users/" & UserAcct & "\"/Library/Group Containers/UBF8T346G9.Office/Outlook/Outlook 15 Profiles/Main Profile/Data/Outlook.sqlite\" vacuum;"
+	
+	#do shell script "/usr/bin/sqlite3 /Users/"& UserAcct &"\"/Library/Group Containers/UBF8T346G9.Office/Outlook/Outlook 15 Profiles/Main Profile/Data/Outlook.sqlite-shm\" vacuum;"
+	
+	do shell script "/usr/bin/sqlite3 /Users/" & UserAcct & "\"/Library/Group Containers/UBF8T346G9.Office/Outlook/Outlook 15 Profiles/Main Profile/Data/Outlook.sqlite-wal\" vacuum;"
+end try
+
+
+
+##########################################
+# Find the Size of the Database Files AFTER doing a vacuuming
+##########################################
+tell application "System Events"
+	set PostSizeMain to do shell script "/bin/ls -ho /Users/" & UserAcct & "\"/Library/Group Containers/UBF8T346G9.Office/Outlook/Outlook 15 Profiles/Main Profile/Data/Outlook.sqlite\" | awk {'print $4'}"
+	
+	set PostSizeWal to do shell script "/bin/ls -ho /Users/" & UserAcct & "\"/Library/Group Containers/UBF8T346G9.Office/Outlook/Outlook 15 Profiles/Main Profile/Data/Outlook.sqlite-wal\" | awk {'print $4'}"
+end tell
+
+
+#####################################
+# Tell Technician we're done and relay before/after sizes
+#####################################
+tell application "Finder"
+	activate
+	display dialog "Vacuuming of Outlook 2016 database completed,
+	Please Launch and verify Mail is okay!
+	
+Main Size was: " & PreSizeMain & " and is now: " & PostSizeMain & "
+Wal Size was: " & PreSizeWal & " and is now: " & PostSizeWal & "" with title "DONE" with icon 1 giving up after 60
+end tell
+
+
+
+return
