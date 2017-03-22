@@ -1,7 +1,8 @@
 #!/bin/bash
 if [[ -f "/Library/LaunchDaemons/com.tanium.taniumclient.plist" ]]; then 
-    isTaniumInstalled="T"
+	isTaniumInstalled="Installed"
 else
-    isTaniumInstalled="F"
+	isTaniumInstalled="Not Installed"
 fi
-printf "<result>%s</result>" "%s"
+
+echo "<result>$isTaniumInstalled</result>"
