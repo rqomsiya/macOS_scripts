@@ -214,6 +214,22 @@ if [[ ${pwrStatus} == "OK" ]] && [[ ${spaceStatus} == "OK" ]]; then
         jamfHelperPID=$(echo $!)
     fi
 
+#Open the app as the current user to enable Authenticated reboot
+macOSinstallerAppPath="/Users/Shared/Install macOS Sierra.app"
+CurrentloggedInUser=$(/usr/bin/python -c 'from SystemConfiguration import SCDynamicStoreCopyConsoleUser; import sys; username = (SCDynamicStoreCopyConsoleUser(None, None, None) or [None])[0]; username = [username,""][username in [u"loginwindow", None, u""]]; sys.stdout.write(username + "\n");')
+
+#There was an issue with startosinstall command that "Install macOS..app" needs to be opened once by logged in user to get it working properly
+effectiveUserID=$(/usr/bin/id -u "$CurrentloggedInUser")
+/bin/launchctl asuser "$effectiveUserID" sudo -u "$CurrentloggedInUser" /usr/bin/osascript <<EOT
+tell application "${macOSinstallerAppPath}" to activate
+EOT
+
+#Wait for 5 seconds to settle down then quit the app
+/bin/sleep 5
+/bin/launchctl asuser "$effectiveUserID" sudo -u "$CurrentloggedInUser" /usr/bin/osascript <<EOT
+tell application "${macOSinstallerAppPath}" to quit
+EOT
+
     ##Begin Upgrade
     /bin/echo "Launching startosinstall..."
     "$OSInstaller/Contents/Resources/startosinstall" --applicationpath "$OSInstaller" --nointeraction --pidtosignal $jamfHelperPID &
