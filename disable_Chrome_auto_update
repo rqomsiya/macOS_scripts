@@ -1,0 +1,9 @@
+#!/bin/sh
+
+rm -rf /Users/$3/Library/Google/GoogleSoftwareUpdate/GoogleSoftwareUpdate.bundle
+mkdir -p /Users/$3/Library/Google/GoogleSoftwareUpdate/
+touch /Users/$3/Library/Google/GoogleSoftwareUpdate/GoogleSoftwareUpdate.bundle
+chown root /Users/$3/Library/Google/GoogleSoftwareUpdate/GoogleSoftwareUpdate.bundle
+chmod 644 /Users/$3/Library/Google/GoogleSoftwareUpdate/GoogleSoftwareUpdate.bundle
+
+exit 0
