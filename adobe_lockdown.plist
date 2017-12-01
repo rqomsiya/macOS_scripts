@@ -30,7 +30,7 @@
         <key>bToggleSendAndTrack</key>
         <false/>
         <key>bToggleWebConnectors</key>
-        <false/>
+        <true/>
         <key>bUpdater</key>
         <false/>
         <key>bUsageMeasurement</key>
