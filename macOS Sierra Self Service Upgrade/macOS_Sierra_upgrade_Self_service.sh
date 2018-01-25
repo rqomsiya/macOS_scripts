@@ -1,56 +1,9 @@
 #!/bin/bash
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-#
-# Copyright (c) 2017 Jamf.  All rights reserved.
-#
-#       Redistribution and use in source and binary forms, with or without
-#       modification, are permitted provided that the following conditions are met:
-#               * Redistributions of source code must retain the above copyright
-#                 notice, this list of conditions and the following disclaimer.
-#               * Redistributions in binary form must reproduce the above copyright
-#                 notice, this list of conditions and the following disclaimer in the
-#                 documentation and/or other materials provided with the distribution.
-#               * Neither the name of the Jamf nor the names of its contributors may be
-#                 used to endorse or promote products derived from this software without
-#                 specific prior written permission.
-#
-#       THIS SOFTWARE IS PROVIDED BY JAMF SOFTWARE, LLC "AS IS" AND ANY
-#       EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-#       WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-#       DISCLAIMED. IN NO EVENT SHALL JAMF SOFTWARE, LLC BE LIABLE FOR ANY
-#       DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-#       (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-#       LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-#       ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-#       (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-#       SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-#
-# This script was designed to be used in a Self Service policy to ensure specific
-# requirements have been met before proceeding with an inplace upgrade to macOS Sierra,
-# as well as to address changes Apple has made to the ability to complete macOS upgrades
-# silently.
-#
-# REQUIREMENTS:
-#           - Jamf Pro
-#           - Latest Version of the macOS Installer (must be 10.12.4 or later)
-#           - Look over the USER VARIABLES and configure as needed.
-#
-#
-# For more information, visit https://github.com/kc9wwh/macOSUpgrade
-#
-#
-# Written by: Joshua Roskos | Professional Services Engineer | Jamf
-#
-# Created On: January 5th, 2017
-# Updated On: May 25th, 2017
-#
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
+# Owner: RYQ (Capital Group Companies)
+# Edited: 1/25/2018
+# Tested on 10.10.5 / 10.11.5 / 10.11.6 Clients to upgrade to 10.12.6
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # USER VARIABLES
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -58,14 +11,8 @@
 ##Enter 0 for Full Screen, 1 for Utility window (screenshots available on GitHub)
 userDialog=0
 
-##Title to be used for userDialog (only applies to Utility Window)
-title="macOS Sierra Upgrade"
-
-##Heading to be used for userDialog
-heading="Please wait as we prepare your computer for macOS Sierra..."
-
 #Specify path to OS installer. Use Parameter 4 in the JSS, or specify here
-#Example: /Applications/Install macOS Sierra.app
+#Example: /Applications/Install macOS High Sierra.app
 OSInstaller="$4"
 
 ##Version of OS. Use Parameter 5 in the JSS, or specify here.
@@ -77,17 +24,33 @@ version="$5"
 #Example: download-sierra-install
 download_trigger="$6"
 
+#Management Account Username and Password variables
+#Required for authenticated reboot, management account must be FV2 enabled
+#If left blank, authenticated reboot will not happen
+mgmtUser="$7"
+mgmtPass="$8"
+
+#Title of OS
+#Example: macOS High Sierra
+macOSname=`echo "$OSInstaller" |sed 's/^\/Applications\/Install \(.*\)\.app$/\1/'`
+
+##Title to be used for userDialog (only applies to Utility Window)
+title="$macOSname Upgrade"
+
+##Heading to be used for userDialog
+heading="Please wait as we prepare your computer for $macOSname..."
+
 ##Title to be used for userDialog
 description="
 This process will take approximately 5-10 minutes.
 Once completed your computer will reboot and begin the upgrade."
 
-#Description to be used prior to downloading Sierra
-dldescription="We need to download macOS Sierra to your computer, this will \
+#Description to be used prior to downloading the OS installer
+dldescription="We need to download $macOSname to your computer, this will \
 take several minutes."
 
 ##Icon to be used for userDialog
-##Default is macOS Sierra Installer logo which is included in the staged installer package
+##Default is macOS Installer logo which is included in the staged installer package
 icon="$OSInstaller/Contents/Resources/InstallAssistant.icns"
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -107,45 +70,45 @@ fi
 ##Check if free space > 15GB
 osMinor=$( /usr/bin/sw_vers -productVersion | awk -F. {'print $2'} )
 if [[ $osMinor -ge 12 ]]; then
-    freeSpace=$( /usr/sbin/diskutil info / | grep "Available Space" | awk '{print $4}' )
+    freeSpace=$( /usr/sbin/diskutil info / | grep "Available Space" | awk '{print $6}' | cut -c 2- )
 else
-    freeSpace=$( /usr/sbin/diskutil info / | grep "Free Space" | awk '{print $4}' )
+    freeSpace=$( /usr/sbin/diskutil info / | grep "Free Space" | awk '{print $6}' | cut -c 2- )
 fi
 
-if [[ ${freeSpace%.*} -ge 15 ]]; then
+if [[ ${freeSpace%.*} -ge 15000000000 ]]; then
     spaceStatus="OK"
-    /bin/echo "Disk Check: OK - ${freeSpace%.*}GB Free Space Detected"
+    /bin/echo "Disk Check: OK - ${freeSpace%.*} Bytes Free Space Detected"
 else
     spaceStatus="ERROR"
-    /bin/echo "Disk Check: ERROR - ${freeSpace%.*}GB Free Space Detected"
+    /bin/echo "Disk Check: ERROR - ${freeSpace%.*} Bytes Free Space Detected"
 fi
 
-##Check for existing Sierra installer
+##Check for existing OS installer
 if [ -e "$OSInstaller" ]; then
   /bin/echo "$OSInstaller found, checking version."
   OSVersion=`/usr/libexec/PlistBuddy -c 'Print :"System Image Info":version' "$OSInstaller/Contents/SharedSupport/InstallInfo.plist"`
   /bin/echo "OSVersion is $OSVersion"
   if [ $OSVersion = $version ]; then
-    downloadSierra="No"
+    downloadOS="No"
   else
-    downloadSierra="Yes"
+    downloadOS="Yes"
     ##Delete old version.
     /bin/echo "Installer found, but old. Deleting..."
     /bin/rm -rf "$OSInstaller"
   fi
 else
-  downloadSierra="Yes"
+  downloadOS="Yes"
 fi
 
-##Download Sierra if needed
-if [ $downloadSierra = "Yes" ]; then
+##Download OS installer if needed
+if [ $downloadOS = "Yes" ]; then
   /Library/Application\ Support/JAMF/bin/jamfHelper.app/Contents/MacOS/jamfHelper \
       -windowType utility -title "$title"  -alignHeading center -alignDescription left -description "$dldescription" \
-      -button1 Ok -defaultButton 1 -icon "$icon" -iconSize 100
+      -button1 Ok -defaultButton 1 -icon "/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/SidebarDownloadsFolder.icns" -iconSize 100
   ##Run policy to cache installer
   /usr/local/jamf/bin/jamf policy -event $download_trigger
 else
-  /bin/echo "macOS Sierra installer with $version was already present, continuing..."
+  /bin/echo "$macOSname installer with $version was already present, continuing..."
 fi
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -161,6 +124,8 @@ fi
 /bin/sleep 2
 ## Update Device Inventory
 /usr/local/jamf/bin/jamf recon
+#Cleanup IAQuitInsteadOfReboot key
+/usr/bin/defaults delete /Library/Preferences/.GlobalPreferences IAQuitInsteadOfReboot
 ## Remove LaunchDaemon
 /bin/rm -f /Library/LaunchDaemons/com.jamfps.cleanupOSInstall.plist
 ## Remove Script
@@ -201,6 +166,13 @@ EOF
 # APPLICATION
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+#Set key to Quit instead of reboot. Reboot will be handled by JAMF policy. This key is deleted as part of first boot script.
+/usr/bin/defaults write /Library/Preferences/.GlobalPreferences IAQuitInsteadOfReboot -bool YES
+
+##Caffeinate
+/usr/bin/caffeinate -dis &
+caffeinatePID=$(echo $!)
+
 if [[ ${pwrStatus} == "OK" ]] && [[ ${spaceStatus} == "OK" ]]; then
     ##Launch jamfHelper
     if [[ ${userDialog} == 0 ]]; then
@@ -213,22 +185,25 @@ if [[ ${pwrStatus} == "OK" ]] && [[ ${spaceStatus} == "OK" ]]; then
         /Library/Application\ Support/JAMF/bin/jamfHelper.app/Contents/MacOS/jamfHelper -windowType utility -title "$title" -icon "$icon" -heading "$heading" -description "$description" -iconSize 100 &
         jamfHelperPID=$(echo $!)
     fi
+    
+    #Check to make sure we've got credentials for authenticated reboot
+    if [ "$mgmtUser" != "" ] && [ "$mgmtPass" != "" ]; then
+      
+      #Create a plist to read in to authrestart
+      fvplist="<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+        <!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyLIst-1.0.dtd\">
+        <plist version=\"1.0\">
+        <dict>
+        <key>Username</key>
+        <string>$mgmtUser</string>
+        <key>Password</key>
+        <string>$mgmtPass</string>
+        </dict>
+        </plist>"
 
-#Open the app as the current user to enable Authenticated reboot
-macOSinstallerAppPath="/Users/Shared/Install macOS Sierra.app"
-CurrentloggedInUser=$(/usr/bin/python -c 'from SystemConfiguration import SCDynamicStoreCopyConsoleUser; import sys; username = (SCDynamicStoreCopyConsoleUser(None, None, None) or [None])[0]; username = [username,""][username in [u"loginwindow", None, u""]]; sys.stdout.write(username + "\n");')
-
-#There was an issue with startosinstall command that "Install macOS..app" needs to be opened once by logged in user to get it working properly
-effectiveUserID=$(/usr/bin/id -u "$CurrentloggedInUser")
-/bin/launchctl asuser "$effectiveUserID" sudo -u "$CurrentloggedInUser" /usr/bin/osascript <<EOT
-tell application "${macOSinstallerAppPath}" to activate
-EOT
-
-#Wait for 5 seconds to settle down then quit the app
-/bin/sleep 5
-/bin/launchctl asuser "$effectiveUserID" sudo -u "$CurrentloggedInUser" /usr/bin/osascript <<EOT
-tell application "${macOSinstallerAppPath}" to quit
-EOT
+      #Write out the plist
+      echo $fvplist > /tmp/fv.plist
+    fi
 
     ##Begin Upgrade
     /bin/echo "Launching startosinstall..."
@@ -240,10 +215,15 @@ else
     /bin/rm -f /Library/LaunchDaemons/com.jamfps.cleanupOSInstall.plist
 
     /bin/echo "Launching jamfHelper Dialog (Requirements Not Met)..."
-    /Library/Application\ Support/JAMF/bin/jamfHelper.app/Contents/MacOS/jamfHelper -windowType utility -title "$title" -icon "$icon" -heading "Requirements Not Met" -description "We were unable to prepare your computer for macOS Sierra. Please ensure you are connected to power and that you have at least 15GB of Free Space.
-    
+    /Library/Application\ Support/JAMF/bin/jamfHelper.app/Contents/MacOS/jamfHelper -windowType utility -title "$title" -icon "$icon" -heading "Requirements Not Met" -description "We were unable to prepare your computer for $macOSname. Please ensure you are connected to power and that you have at least 15GB of Free Space.
     If you continue to experience this issue, please contact the IT Support Center." -iconSize 100 -button1 "OK" -defaultButton 1
 
 fi
+
+##Kill Caffeinate
+kill ${caffeinatePID}
+
+#Trigger an authenticated reboot
+fdesetup authrestart -inputplist < /tmp/fv.plist
 
 exit 0
