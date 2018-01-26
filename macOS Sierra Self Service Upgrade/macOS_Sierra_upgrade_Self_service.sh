@@ -1,9 +1,56 @@
 #!/bin/bash
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# Owner: RYQ (Capital Group Companies)
-# Edited: 1/25/2018
-# Tested on 10.10.5 / 10.11.5 / 10.11.6 Clients to upgrade to 10.12.6
+#
+# Copyright (c) 2017 Jamf.  All rights reserved.
+#
+#       Redistribution and use in source and binary forms, with or without
+#       modification, are permitted provided that the following conditions are met:
+#               * Redistributions of source code must retain the above copyright
+#                 notice, this list of conditions and the following disclaimer.
+#               * Redistributions in binary form must reproduce the above copyright
+#                 notice, this list of conditions and the following disclaimer in the
+#                 documentation and/or other materials provided with the distribution.
+#               * Neither the name of the Jamf nor the names of its contributors may be
+#                 used to endorse or promote products derived from this software without
+#                 specific prior written permission.
+#
+#       THIS SOFTWARE IS PROVIDED BY JAMF SOFTWARE, LLC "AS IS" AND ANY
+#       EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+#       WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+#       DISCLAIMED. IN NO EVENT SHALL JAMF SOFTWARE, LLC BE LIABLE FOR ANY
+#       DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+#       (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+#       LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+#       ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+#       (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+#       SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# This script was designed to be used in a Self Service policy to ensure specific
+# requirements have been met before proceeding with an inplace upgrade of the macOS,
+# as well as to address changes Apple has made to the ability to complete macOS upgrades
+# silently.
+#
+# REQUIREMENTS:
+#           - Jamf Pro
+#           - Latest Version of the macOS Installer (must be 10.12.4 or later)
+#           - Look over the USER VARIABLES and configure as needed.
+#
+#
+# For more information, visit https://github.com/kc9wwh/macOSUpgrade
+#
+#
+# Written by: Joshua Roskos | Professional Services Engineer | Jamf
+#
+# Created On: January 5th, 2017
+# Updated On: January 26th, 2018
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # USER VARIABLES
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -23,12 +70,6 @@ version="$5"
 #This should match a custom trigger for a policy that contains an installer
 #Example: download-sierra-install
 download_trigger="$6"
-
-#Management Account Username and Password variables
-#Required for authenticated reboot, management account must be FV2 enabled
-#If left blank, authenticated reboot will not happen
-mgmtUser="$7"
-mgmtPass="$8"
 
 #Title of OS
 #Example: macOS High Sierra
@@ -56,6 +97,9 @@ icon="$OSInstaller/Contents/Resources/InstallAssistant.icns"
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # SYSTEM CHECKS
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+##Get Current User
+currentUser=$( stat -f %Su /dev/console )
 
 ##Check if device is on battery or ac power
 pwrAdapter=$( /usr/bin/pmset -g ps )
@@ -124,8 +168,6 @@ fi
 /bin/sleep 2
 ## Update Device Inventory
 /usr/local/jamf/bin/jamf recon
-#Cleanup IAQuitInsteadOfReboot key
-/usr/bin/defaults delete /Library/Preferences/.GlobalPreferences IAQuitInsteadOfReboot
 ## Remove LaunchDaemon
 /bin/rm -f /Library/LaunchDaemons/com.jamfps.cleanupOSInstall.plist
 ## Remove Script
@@ -163,11 +205,42 @@ EOF
 /bin/chmod 644 /Library/LaunchDaemons/com.jamfps.cleanupOSInstall.plist
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# APPLICATION
+# LAUNCH AGENT FOR FILEVAUTL AUTHENTICATED REBOOTS
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-#Set key to Quit instead of reboot. Reboot will be handled by JAMF policy. This key is deleted as part of first boot script.
-/usr/bin/defaults write /Library/Preferences/.GlobalPreferences IAQuitInsteadOfReboot -bool YES
+cat << EOP > /Library/LaunchAgents/com.apple.install.osinstallersetupd.plist
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.apple.install.osinstallersetupd</string>
+    <key>LimitLoadToSessionType</key>
+    <string>Aqua</string>
+    <key>MachServices</key>
+    <dict>
+        <key>com.apple.install.osinstallersetupd</key>
+        <true/>
+    </dict>
+    <key>TimeOut</key>
+    <integer>Aqua</integer>
+    <key>OnDemand</key>
+    <true/>
+    <key>ProgramArguments</key>
+    <array>
+        <string>$OSInstaller/Contents/Frameworks/OSInstallerSetup.framework/Resources/osinstallersetupd</string>
+    </array>
+</dict>
+</plist>
+EOP
+
+##Set the permission on the file just made.
+/usr/sbin/chown root:wheel /Library/LaunchAgents/com.apple.install.osinstallersetupd.plist
+/bin/chmod 644 /Library/LaunchAgents/com.apple.install.osinstallersetupd.plist
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# APPLICATION
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 ##Caffeinate
 /usr/bin/caffeinate -dis &
@@ -185,26 +258,11 @@ if [[ ${pwrStatus} == "OK" ]] && [[ ${spaceStatus} == "OK" ]]; then
         /Library/Application\ Support/JAMF/bin/jamfHelper.app/Contents/MacOS/jamfHelper -windowType utility -title "$title" -icon "$icon" -heading "$heading" -description "$description" -iconSize 100 &
         jamfHelperPID=$(echo $!)
     fi
-    
-    #Check to make sure we've got credentials for authenticated reboot
-    if [ "$mgmtUser" != "" ] && [ "$mgmtPass" != "" ]; then
-      
-      #Create a plist to read in to authrestart
-      fvplist="<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-        <!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyLIst-1.0.dtd\">
-        <plist version=\"1.0\">
-        <dict>
-        <key>Username</key>
-        <string>$mgmtUser</string>
-        <key>Password</key>
-        <string>$mgmtPass</string>
-        </dict>
-        </plist>"
-
-      #Write out the plist
-      echo $fvplist > /tmp/fv.plist
+    ##Load LaunchAgent
+    if [[ ${currentUser} != "root" ]]; then
+        userID=$( id -u ${currentUser} )
+        launchctl bootstrap gui/${userID} /Library/LaunchAgents/com.apple.install.osinstallersetupd.plist
     fi
-
     ##Begin Upgrade
     /bin/echo "Launching startosinstall..."
     "$OSInstaller/Contents/Resources/startosinstall" --applicationpath "$OSInstaller" --nointeraction --pidtosignal $jamfHelperPID &
@@ -213,17 +271,16 @@ else
     ## Remove Script
     /bin/rm -f /usr/local/jamfps/finishOSInstall.sh
     /bin/rm -f /Library/LaunchDaemons/com.jamfps.cleanupOSInstall.plist
+    /bin/rm -f /Library/LaunchAgents/com.apple.install.osinstallersetupd.plist
 
     /bin/echo "Launching jamfHelper Dialog (Requirements Not Met)..."
     /Library/Application\ Support/JAMF/bin/jamfHelper.app/Contents/MacOS/jamfHelper -windowType utility -title "$title" -icon "$icon" -heading "Requirements Not Met" -description "We were unable to prepare your computer for $macOSname. Please ensure you are connected to power and that you have at least 15GB of Free Space.
+
     If you continue to experience this issue, please contact the IT Support Center." -iconSize 100 -button1 "OK" -defaultButton 1
 
 fi
 
 ##Kill Caffeinate
 kill ${caffeinatePID}
-
-#Trigger an authenticated reboot
-fdesetup authrestart -inputplist < /tmp/fv.plist
 
 exit 0
