@@ -3,7 +3,6 @@
 # Script includes IAQuitInsteadOfReboot key (forces installer to quit instead of proceed with a reboot).
 # Reboot will be handled by JAMF policy (authenticated reboot).
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# Edited: RYQ (Capital Group Companies)
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # USER VARIABLES
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
