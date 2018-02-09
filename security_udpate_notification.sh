@@ -1,5 +1,5 @@
 #!/bin/bash
-# Logoff function only works on macOS 10.11+ 
+# Logoff function only works on macOS 10.10 and 10.11
 # Get the logged in user's name
 loggedInUser=$( ls -l /dev/console | awk '{print $3}' )
 # Get the PID of the logged in user
