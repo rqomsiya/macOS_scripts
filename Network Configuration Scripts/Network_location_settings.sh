@@ -62,6 +62,11 @@ for i in $(networksetup -listallnetworkservices); do
 
 unset IFS
 
+# Disables Bluetooth Pan and Thunderbolt Bridge
+
+/usr/sbin/networksetup -setnetworkserviceenabled "Bluetooth PAN" off
+/usr/sbin/networksetup -setnetworkserviceenabled "Thunderbolt Bridge" off
+
 # Echo that we're done
 echo "PAC proxy configured for all interfaces. AutoProxy Discovery Disabled on all interfaces."
 
