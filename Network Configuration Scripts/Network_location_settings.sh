@@ -62,7 +62,7 @@ for i in $(networksetup -listallnetworkservices); do
 
 unset IFS
 
-# Disables Bluetooth Pan and Thunderbolt Bridge
+# Disables Bluetooth PAN and Thunderbolt Bridge
 
 /usr/sbin/networksetup -setnetworkserviceenabled "Bluetooth PAN" off
 /usr/sbin/networksetup -setnetworkserviceenabled "Thunderbolt Bridge" off
