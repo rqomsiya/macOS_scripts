@@ -1,5 +1,5 @@
 #!/bin/bash
-# Logoff function only works on macOS 10.10 and 10.11
+# Logoff function only works on macOS 10.10.5 and 10.12.6 (still need to test 10.11.5 and 10.11.6)
 # Get the logged in user's name
 loggedInUser=$( ls -l /dev/console | awk '{print $3}' )
 # Get the UID of the logged in user
