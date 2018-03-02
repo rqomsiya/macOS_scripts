@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>ADDomain</key>
+	<string>cguser.capgroup.com</string>
+	<key>ChangePasswordType</key>
+	<string>Task</string>
+	<key>GetHelpOptions</key>
+	<string></string>
+	<key>GetHelpType</key>
+	<string>URL</string>
+	<key>HidePrefs</key>
+	<false/>
+	<key>HideQuit</key>
+	<false/>
+	<key>HideRenew</key>
+	<false/>
+	<key>HideSignOut</key>
+	<false/>
+	<key>KerberosRealm</key>
+	<string>CGUSER.CAPGROUP.COM</string>
+	<key>LocalPasswordSync</key>
+	<true/>
+	<key>MessageUPCAlert</key>
+	<string>Your password was changed elsewhere. Please ensure you are connected to wired Ethernet and log off and back on with your updated CG AD password</string>
+	<key>PersistExpiration</key>
+	<true/>
+	<key>RenewTickets</key>
+	<string>1</string>
+	<key>SecondsToRenew</key>
+	<string>7200</string>
+	<key>ShowHome</key>
+	<string>0</string>
+	<key>SignInWindowAlert</key>
+	<true/>
+	<key>SignInWindowOnLaunch</key>
+	<true/>
+	<key>UPCAlert</key>
+	<true/>
+	<key>UseKeychain</key>
+	<true/>
+	<key>Verbose</key>
+	<false/>
+	<key>GetHelpOptions</key>
+	<string>http://cgweb/technologysupport/</string>
+</dict>
+</plist>
