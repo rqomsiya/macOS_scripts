@@ -44,5 +44,7 @@
 	<false/>
 	<key>GetHelpOptions</key>
 	<string>http://cgweb/technologysupport/</string>
+	<key>DontShowWelcome</key>
+	<true/>
 </dict>
 </plist>
