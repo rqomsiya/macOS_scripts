@@ -9,20 +9,19 @@ loggedInUserHome=`dscl . -read /Users/$loggedInUser NFSHomeDirectory | awk '{pri
 tld="*.capgroup.com,cgweb,cgweb2,teams,communities,projects,atm,*.okta.com,ssoiwa.glb.capgroup.com,capgroup.okta.com,ok3-crtrs.okta.com"
 authentication="negotiate,basic,digest,ntlm"
 currentUser=$(stat -f %Su "/dev/console")
-number=$(ps ax | grep -c "Google Chrome")
 
-# Check to see if user is logged in
+# Check to see if user is logged in as this is a requirement for the script to run. Script writes to logged in users Chrome pref file
 if [[ "$currentUser" == "root" ]]; then
-	echo "User is logged in do not run script"
+	echo "No user is logged in. Exiting script."
 	exit 0
 fi
 # Check to see if Google Chrome is running (below script will quit Chrome so we want to make sure its not running)
-if [ $number -gt 0 ]; then
-	echo "Google Chrome is running"
+if pgrep -x "Google Chrome"; then
+	echo "Google Chrome is running. Exiting Script."
 	exit 0
 fi
 		
-# Google Chrome customizations
+# Start Google Chrome customizations
 /bin/echo "*** Enable single sign-on in Google Chrome for $loggedInUser ***"
 /bin/echo "Quit all Chrome-related processes"
 /usr/bin/pkill -l -U ${loggedInUser} Chrome
