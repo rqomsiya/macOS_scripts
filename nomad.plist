@@ -6,8 +6,6 @@
 	<string>cguser.capgroup.com</string>
 	<key>ChangePasswordType</key>
 	<string>Task</string>
-	<key>GetHelpOptions</key>
-	<string></string>
 	<key>GetHelpType</key>
 	<string>URL</string>
 	<key>HidePrefs</key>
@@ -46,5 +44,9 @@
 	<string>http://cgweb/technologysupport/</string>
 	<key>DontShowWelcome</key>
 	<true/>
+	<key>SignInWindowOnLaunchExclusions</key>
+	<array>
+		<string>cgadmin</string>
+	</array>
 </dict>
 </plist>
