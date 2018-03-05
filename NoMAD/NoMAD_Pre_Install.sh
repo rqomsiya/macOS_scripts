@@ -83,4 +83,4 @@ else
 	logme "NoMAD not found."
 fi
 
-logme "Installation completed"
+logme "Pre-Installation completed"
