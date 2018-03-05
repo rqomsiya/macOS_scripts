@@ -5,11 +5,11 @@ initRestart() {
 echo > /tmp/restartscript.sh '#!/bin/bash
 timerSeconds=14400
 cdPath="/Applications/Utilities/cocoaDialog.app/Contents/MacOS/CocoaDialog"
-cdTitle="CG IT: Restart required for Security Updates"
+cdTitle="CG IT - Restart Required: This Mac will restart in 4 hours"
 rm -f /tmp/hpipe
 mkfifo /tmp/hpipe
 sleep 0.2
-$cdPath progressbar --title "$cdTitle" --text "Please SAVE all work and restart now. Your Mac will restart in 4 hours..." \
+$cdPath progressbar --title "$cdTitle" --text "Your Mac will restart in 4 hours..." \
 --posX "left" --posY "top" --width 300 --float \
 --icon-file "/tmp/cg_icon.png" \
 --icon-height 48 --icon-width 48 --height 90 < /tmp/hpipe &
