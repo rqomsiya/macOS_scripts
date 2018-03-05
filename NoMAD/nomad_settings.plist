@@ -48,5 +48,9 @@
 	</array>
 	<key>TitleSignIn</key>
 	<string>Please enter your CG credentials</string>
+	<key>X509CA</key>
+	<string></string>
+	<key>Template</key>
+	<string></string>
 </dict>
 </plist>
