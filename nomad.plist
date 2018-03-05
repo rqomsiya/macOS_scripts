@@ -48,5 +48,7 @@
 	<array>
 		<string>cgadmin</string>
 	</array>
+	<key>TitleSignIn</key>
+	<string>Please enter your CG credentials</string>
 </dict>
 </plist>
