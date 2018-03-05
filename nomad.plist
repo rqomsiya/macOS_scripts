@@ -33,7 +33,7 @@
 	<key>SignInWindowAlert</key>
 	<true/>
 	<key>SignInWindowOnLaunch</key>
-	<true/>
+	<false/>
 	<key>UPCAlert</key>
 	<true/>
 	<key>UseKeychain</key>
