@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cocoaDialogPath="/etc/CocoaDialog/CocoaDialog.app/Contents/MacOS/CocoaDialog"
+cocoaDialogPath="/Applications/Utilities/cocoaDialog.app/Contents/MacOS/CocoaDialog"
 rebootSeconds=300
 restartTitle="Software Update Completed"
 
@@ -8,14 +8,14 @@ initRestart() {
 # Create restart script
 echo > /tmp/restartscript.sh '#!/bin/bash
 timerSeconds=$1
-cdPath=$2
-cdTitle=$3
+cdPath="/Applications/Utilities/cocoaDialog.app/Contents/MacOS/CocoaDialog"
+cdTitle="CG IT: Restart required for Security Updates"
 rm -f /tmp/hpipe
 mkfifo /tmp/hpipe
 sleep 0.2
 $cdPath progressbar --title "$cdTitle" --text "Preparing to reboot this Mac..." \
 --posX "left" --posY "top" --width 300 --float \
---icon-file "/System/Library/CoreServices/loginwindow.app/Contents/Resources/Restart.tiff" \
+--icon-file "/tmp/cg_icon.png" \
 --icon-height 48 --icon-width 48 --height 90 < /tmp/hpipe &
 exec 3<> /tmp/hpipe
 echo "100" >&3
