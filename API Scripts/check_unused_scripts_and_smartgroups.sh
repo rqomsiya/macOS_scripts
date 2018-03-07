@@ -1,7 +1,6 @@
 #!/bin/sh
-#Todd Houle
-#Feb2016
-#This script will build an ugly html page with unused scripts and groups in your JSS
+
+#This script will build an html page with unused scripts and groups in your JSS
 
 
 ########### EDIT THESE ##################################
