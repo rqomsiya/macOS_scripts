@@ -8,9 +8,6 @@ if [ "$4" != "" ] && [ "$autoProxyURL" == "" ]; then
 autoProxyURL=$4
 fi
 
-# Detects all network hardware & creates services for all installed network hardware
-/usr/sbin/networksetup -detectnewhardware
-
 IFS=$'\n'
 
 	#Loops through the list of network services
