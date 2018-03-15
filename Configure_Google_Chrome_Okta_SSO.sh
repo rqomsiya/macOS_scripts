@@ -6,8 +6,8 @@
 # Variables
 loggedInUser=`/bin/ls -l /dev/console | /usr/bin/awk '{ print $3 }'`
 loggedInUserHome=`dscl . -read /Users/$loggedInUser NFSHomeDirectory | awk '{print $NF}'`
-tld="*.capgroup.com,cgweb,cgweb2,teams,communities,projects,atm,*.okta.com,mysite,cgwebsocial,mysite"
-authentication="negotiate,basic,digest,ntlm"
+tld="*.capgroup.com,cgweb,cgweb2,teams,communities,projects,atm,*.okta.com,,mysite,cgwebsocial,*.cguser.capgroup.com"
+authentication="negotiate,ntlm"
 currentUser=$(stat -f %Su "/dev/console")
 
 # Check to see if user is logged in as this is a requirement for the script to run. Script writes to logged in users Chrome pref file
