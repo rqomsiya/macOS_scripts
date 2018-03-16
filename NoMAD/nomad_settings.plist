@@ -5,7 +5,7 @@
 	<key>ADDomain</key>
 	<string>cguser.capgroup.com</string>
 	<key>ChangePasswordType</key>
-	<string>Task</string>
+	<string>Kerberos</string>
 	<key>GetHelpType</key>
 	<string>URL</string>
 	<key>HidePrefs</key>
@@ -25,9 +25,9 @@
 	<key>PersistExpiration</key>
 	<true/>
 	<key>RenewTickets</key>
-	<string>1</string>
+	<true/>
 	<key>SecondsToRenew</key>
-	<string>7200</string>
+	<string>3600</string>
 	<key>ShowHome</key>
 	<string>0</string>
 	<key>SignInWindowAlert</key>
