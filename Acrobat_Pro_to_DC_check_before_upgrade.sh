@@ -32,7 +32,7 @@ userChoice=$("$jamfHelper" -windowType "$windowType" -lockHUD -title "$title" -t
 if [ "$userChoice" == "0" ]; then
     echo "User clicked UPDATE; now running Adobe Acrobat DC policy via JSS policy ID 1527."
 fi	
-# Runs checks to see if Acrobat is Running
+# Runs checks to see if Acrobat is Running. NOTE: Edit jamf policy -id to whatever policy is applicable for Acrobat Pro
 	if [ "$processrunning" != "" ]; then
 	echo "$process found running"
 	/bin/echo "Stopping process: $process"
