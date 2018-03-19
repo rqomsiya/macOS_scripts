@@ -1,3 +1,8 @@
+Prerequisites:
+- Need Packages.app application
+- Need MS Full installer from http://macadmins.software 
+
+STEPS:
 1) Open up Packages.app
 2) Create RAW package
 3) Copy MS Installer Choices XML in Payloads
