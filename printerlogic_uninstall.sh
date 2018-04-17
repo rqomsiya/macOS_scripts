@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# When updating this script, make the same changes to the PrinterInstallerClientUninstall Automator app
-
 echo "Stopping application"
 osascript -e 'tell application "PrinterInstallerClient" to quit' || true
 
