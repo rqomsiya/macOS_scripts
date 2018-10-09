@@ -1,12 +1,12 @@
 #!/bin/bash
 # Written by RYQ (Capital Group Companies)
-# Created 2/28/18
-# Edited 3/2/18
+# Created 02/28/18
+# Edited 10/9/2018
 
 # Variables
 loggedInUser=`/bin/ls -l /dev/console | /usr/bin/awk '{ print $3 }'`
 loggedInUserHome=`dscl . -read /Users/$loggedInUser NFSHomeDirectory | awk '{print $NF}'`
-tld="*.capgroup.com,cgweb,cgweb2,teams,communities,projects,atm,*.okta.com,,mysite,cgwebsocial,*.cguser.capgroup.com"
+tld="*.capgroup.com,cgweb,cgweb2,teams,communities,projects,atm,*.okta.com,mysite,cgwebsocial,*.cguser.capgroup.com,*.cgftat.com,*.oktapreview.com,w948881,w776428,w890712,ssoiwa,oktapreview,*.oktapreview.com,*.oktacdn.com"
 authentication="negotiate,ntlm"
 currentUser=$(stat -f %Su "/dev/console")
 
