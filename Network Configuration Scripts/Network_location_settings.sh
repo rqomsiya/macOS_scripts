@@ -1,9 +1,9 @@
 #!/bin/bash
 
-## Create network location "Automatic" and delete all other network locations
-networksetup -createlocation Automatic populate 2> /dev/null
+## Create network location "Automatic Network" and delete all other network locations
+networksetup -createlocation "Automatic Network" populate 2> /dev/null
 sleep 5
-networksetup -switchtolocation Automatic 2> /dev/null
+networksetup -switchtolocation "Automatic Network" 2> /dev/null
 sleep 2
 networksetup -deletelocation "Wi-Fi" 2> /dev/null
 sleep 2
@@ -11,6 +11,7 @@ networksetup -deletelocation "Ethernet" 2> /dev/null
 sleep 2
 networksetup -deletelocation "Display Ethernet" 2> /dev/null
 sleep 5
+networksetup -deletelocation "Automatic" 2> /dev/null
 
 ## Set proxy locations
 # HARDCODED VALUES ARE SET HERE
@@ -55,17 +56,15 @@ sleep 5
 IFS=$'\n'
 
 for i in $(networksetup -listallnetworkservices); do
-	networksetup -setproxyautodiscovery "$i" off
-	networksetup -setsearchdomains "$i" capgroup.com cguser.capgroup.com
-	networksetup -setproxybypassdomains "$i" "*.local, 169.254/16, cguser.capgroup.com, capgroup.com"
+	networksetup -setproxyautodiscovery "$i" off 2> /dev/null
+	networksetup -setsearchdomains "$i" capgroup.com cguser.capgroup.com 2> /dev/null
+	networksetup -setproxybypassdomains "$i" "*.local, 169.254/16, cguser.capgroup.com, capgroup.com" 2> /dev/null
 	done
 
 unset IFS
 
-# Disables Bluetooth PAN and Thunderbolt Bridge
-
-/usr/sbin/networksetup -setnetworkserviceenabled "Bluetooth PAN" off
-/usr/sbin/networksetup -setnetworkserviceenabled "Thunderbolt Bridge" off
+# Set "Exclude simple hostnames" to ON
+echo "list Setup:/Network/Service/[^/]+"|scutil| awk '{print $4}' | cut -c 24-59 |while read serviceid; do /usr/libexec/PlistBuddy -c "Add :NetworkServices:$serviceid:Proxies:ExcludeSimpleHostnames integer 1" /Library/Preferences/SystemConfiguration/preferences.plist ;/usr/libexec/PlistBuddy -c "Set :NetworkServices:$serviceid:Proxies:ExcludeSimpleHostnames 1" /Library/Preferences/SystemConfiguration/preferences.plist; done
 
 # Echo that we're done
 echo "PAC proxy configured for all interfaces. AutoProxy Discovery Disabled on all interfaces."
