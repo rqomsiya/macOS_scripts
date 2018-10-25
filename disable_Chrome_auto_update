@@ -1,9 +1,5 @@
 #!/bin/sh
 
-rm -rf /Users/$3/Library/Google/GoogleSoftwareUpdate/GoogleSoftwareUpdate.bundle
-mkdir -p /Users/$3/Library/Google/GoogleSoftwareUpdate/
-touch /Users/$3/Library/Google/GoogleSoftwareUpdate/GoogleSoftwareUpdate.bundle
-chown root /Users/$3/Library/Google/GoogleSoftwareUpdate/GoogleSoftwareUpdate.bundle
-chmod 644 /Users/$3/Library/Google/GoogleSoftwareUpdate/GoogleSoftwareUpdate.bundle
+rm /Applications/Google\ Chrome.app/Contents/Versions/*/Google\ Chrome\ Framework.framework/Versions/A/Frameworks/KeystoneRegistration.framework/KeystoneRegistration
 
 exit 0
