@@ -6,7 +6,7 @@
 # Variables
 loggedInUser=`/bin/ls -l /dev/console | /usr/bin/awk '{ print $3 }'`
 loggedInUserHome=`dscl . -read /Users/$loggedInUser NFSHomeDirectory | awk '{print $NF}'`
-tld="*.capgroup.com,cgweb,cgweb2,teams,communities,projects,atm,*.okta.com,mysite,cgwebsocial,*.cguser.capgroup.com,*.cgftat.com,*.oktapreview.com,w948881,w776428,w890712,ssoiwa,oktapreview,*.oktapreview.com,*.oktacdn.com"
+tld="*.capgroup.com,cgweb,cgweb2,cgweb3,teams,communities,projects,atm,*.okta.com,mysite,cgwebsocial,*.cguser.capgroup.com,*.cgftat.com,*.oktapreview.com,w948881,w776428,w890712,ssoiwa,oktapreview,*.oktapreview.com,*.oktacdn.com"
 authentication="negotiate,ntlm"
 currentUser=$(stat -f %Su "/dev/console")
 
