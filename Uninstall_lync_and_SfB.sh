@@ -40,10 +40,3 @@ rm -rf /Users/$user/Documents/Microsoft\ User\ Data/Microsoft/Communicator
 # #6 remove this file from the Keychains folder and therefore, the Keychain
 rm /Users/$user/Library/Keychains/OC_KeyContainer*
 
-# #7 Delete the following KeyChain entry using security command
-# $user variable is still in place from earlier
-
-# Pull current logged in user's e-mail address into 'userEmail' variable.
-userEmail=$(dscl . -read /Users/$user EMailAddress | cut -f2 -d":" | cut -f2 -d" ")
-security delete-certificate -c $userEmail /Users/$user/Library/Keychains/login.keychain
-security delete-generic-password -l "OC_KeyContainer*" /Users/$user/Library/Keychains/login.keychain
