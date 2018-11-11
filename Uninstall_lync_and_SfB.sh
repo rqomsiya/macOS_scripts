@@ -1,8 +1,6 @@
 #!/bin/sh
 # script to remove items listed on https://support.microsoft.com/en-us/kb/2691870 "How to perform a clean uninstall of Lync for Mac 2011"
-# 10/25/2016-added lines based on script Dave Fisher posted on Slack
-# 10/25/2016-Lucas Vance from jamf support helped with cut commands for userEmail
-# tested in an AD environment
+# Created by RYQ (Capital Group Companies) 
 
 # Pull current logged in user into 'user' variable.
 user=`ls -l /dev/console | cut -d " " -f 4`
@@ -11,9 +9,10 @@ user=`ls -l /dev/console | cut -d " " -f 4`
 killall "Microsoft Lync"
 killall "Skype for Business"
 
-# #3 Delete the Lync & SfB applications
+# #3 Delete the Lync & SfB applications, including older installs of Lync that are located in Office 2011 folder
 rm -rf /Applications/Microsoft\ Lync.app
 rm -rf /Applications/Skype\ For\ Business.app
+rm -rf "/Applications/Microsoft Office 2011/Microsoft Lync.app"
 
 # #4 Delete caches, cookies, OC_KeyContainer, preferences, receipts & logs (if present) 
 rm -rf /Users/$user/Library/Application\ Support/com.apple.sharedfilelist/com.apple.LSSharedFileList.ApplicationRecentDocuments/com.microsoft.lync.sfl
@@ -39,4 +38,3 @@ rm -rf /Users/$user/Documents/Microsoft\ User\ Data/Microsoft/Communicator
 
 # #6 remove this file from the Keychains folder and therefore, the Keychain
 rm /Users/$user/Library/Keychains/OC_KeyContainer*
-
