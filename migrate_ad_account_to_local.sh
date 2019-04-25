@@ -1,7 +1,5 @@
 #!/bin/bash
 # Modified 2017-03-03
-# Author: Marcus Siöström
-# This script is a modified version of https://github.com/rtrouton/rtrouton_scripts/tree/master/rtrouton_scripts/migrate_ad_mobile_account_to_local_account
 # This script will convert the currently signed in (GUI) user from a mobile account to a local account whithout user intervention
 
 logfile="/Library/Managed Installs/Logs/DomAccToLocal.log"
