@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>AutoOpenSafeDownloads</key>
+    <false/>
+    <key>DomainsToNeverSetUp</key>
+	<array>
+		<string>aol.com</string>
+		<string>facebook.com</string>
+		<string>flickr.com</string>
+		<string>google.com</string>
+		<string>twitter.com</string>
+		<string>vimeo.com</string>
+		<string>yahoo.com</string>
+		<string>hotmail.com</string>
+		<string>chadwickschool.org</string>
+		<string>cox.com</string>
+		<string>msn.com</string>
+		<string>att.com</string>
+		<string>verizonwireless.com</string>
+		<string>verizon.com</string>
+		<string>timewarnercable.com</string>
+		<string>charter.com</string>
+		<string>comcast.net</string>
+		<string>gmail.com</string>
+		<string>zoho.com</string>
+		<string>icloud.com</string>
+		<string>apple.com</string>
+		<string>me.com</string>
+		<string>aim.com</string>
+		<string>mail.com</string>
+		<string>fastmail.fm</string>
+		<string>earthlink.net</string>
+	</array>
+    <key>AutoFillCreditCardData</key>
+    <false/>
+    <key>AutoFillFromAddressBook</key>
+    <false/>
+    <key>AutoFillPasswords</key>
+    <false/>
+    <key>AutoFillMiscellaneousForms</key>
+    <false/>
+</dict>				
+</plist>
