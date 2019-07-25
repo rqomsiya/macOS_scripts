@@ -1,0 +1,17 @@
+#!/bin/bash
+
+## Created by RYQ 6/20/2019
+## Modified 7/24/2019
+
+SSID=$(/usr/sbin/networksetup -getairportnetwork en0 | awk '{ print $4 }')
+if [[ $SSID = IMAnetwork ]]; then
+	echo Continuing with script
+	while read networkService; do
+		if ! [[ ${networkService} =~ .*Wi-Fi.* ]]; then
+		networksetup -setnetworkserviceenabled "${networkService}" off
+		fi
+	done < <( networksetup -listnetworkserviceorder | awk '/^\([0-9]/{$1 ="";gsub("^ ","");print}' )
+else
+	echo Not Connected to IMAnetwork exiting
+fi
+exit 0
