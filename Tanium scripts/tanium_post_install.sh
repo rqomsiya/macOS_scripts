@@ -1,5 +1,8 @@
 #!/bin/bash
 
+
+#Server Variables
+
 # Determine working directory
 install_dir=`dirname $0`
 
