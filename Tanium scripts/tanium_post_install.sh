@@ -11,7 +11,7 @@ Tanium="TaniumClient-7.2.314.3608.pkg"
 
 sleep 10
 
-/Library/Tanium/TaniumClient/TaniumClient config set ServerNameList tants1.capgroup.com,148.107.22.53,148.107.28.53
+/Library/Tanium/TaniumClient/TaniumClient config set ServerNameList xxxx.serverlocation.com
 
 #Load the launchD
 sudo launchctl load /Library/LaunchDaemons/com.tanium.taniumclient.plist
