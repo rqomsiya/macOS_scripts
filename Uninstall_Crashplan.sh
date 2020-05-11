@@ -8,5 +8,5 @@ then
 sudo /Library/Application\ Support/CrashPlan/Uninstall.app/Contents/Resources/uninstall.sh 
 else
 # didn't find the file, do something
-echo "file not found"
+echo "Code42 Not Found"
 fi
