@@ -1,6 +1,12 @@
 #!/bin/bash
 
-# Script to uninstall CrashPlan installations that are NOT per user
-sudo /Library/Application\ Support/CrashPlan/Uninstall.app/Contents/Resources/uninstall.sh 
+filelookingfor="/Library/Application\ Support/CrashPlan/Uninstall.app/Contents/Resources/uninstall.sh"
 
-exit 0
+if [ -f $filelookingfor ];
+then
+# found the file do something
+sudo /Library/Application\ Support/CrashPlan/Uninstall.app/Contents/Resources/uninstall.sh 
+else
+# didn't find the file, do something
+echo "file not found"
+fi
