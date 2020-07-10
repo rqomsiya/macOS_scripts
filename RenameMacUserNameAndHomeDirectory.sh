@@ -1,7 +1,7 @@
 #!/bin/bash
 ###############################################################################
 # Version 1.2
-#
+# RYQ (CG)
 # RenameMacUserNameAndHomeDirectory.sh - Script to rename the username of a
 # user account on MacOS. The script updates the users record name (username),
 # and home directory.  If the user receiving the name change is signed in
