@@ -6,7 +6,7 @@
 # Determine working directory
 install_dir=`dirname $0`
 
-#Office Installers
+#Tanium Installer
 Tanium="TaniumClient-7.2.314.3608.pkg"
 
 #Install Tanium client
